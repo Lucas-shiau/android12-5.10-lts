@@ -19,8 +19,8 @@ bool lzma_is_compressed(const char *input);
 
 struct zstd_data {
 #ifdef HAVE_ZSTD_SUPPORT
-	ZSTD_CStream	*cstream;
-	ZSTD_DStream	*dstream;
+	zstd_cstream	*cstream;
+	zstd_dstream	*dstream;
 #endif
 };
 

@@ -3,7 +3,7 @@
 
 int main(void)
 {
-	ZSTD_CStream	*cstream;
+	zstd_cstream	*cstream;
 
 	cstream = ZSTD_createCStream();
 	ZSTD_freeCStream(cstream);

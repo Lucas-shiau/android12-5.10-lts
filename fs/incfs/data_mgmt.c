@@ -435,7 +435,7 @@ static ssize_t zstd_decompress_safe(struct mount_info *mi,
 		unsigned int workspace_size = ZSTD_DStreamWorkspaceBound(
 						INCFS_DATA_FILE_BLOCK_SIZE);
 		void *workspace = kvmalloc(workspace_size, GFP_NOFS);
-		ZSTD_DStream *stream;
+		zstd_dstream *stream;
 
 		if (!workspace) {
 			result = -ENOMEM;

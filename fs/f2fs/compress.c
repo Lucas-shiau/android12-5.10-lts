@@ -333,8 +333,8 @@ static const struct f2fs_compress_ops f2fs_lz4_ops = {
 
 static int zstd_init_compress_ctx(struct compress_ctx *cc)
 {
-	ZSTD_parameters params;
-	ZSTD_CStream *stream;
+	zstd_parameters params;
+	zstd_cstream *stream;
 	void *workspace;
 	unsigned int workspace_size;
 	unsigned char level = F2FS_I(cc->inode)->i_compress_flag >>
@@ -376,9 +376,9 @@ static void zstd_destroy_compress_ctx(struct compress_ctx *cc)
 
 static int zstd_compress_pages(struct compress_ctx *cc)
 {
-	ZSTD_CStream *stream = cc->private2;
-	ZSTD_inBuffer inbuf;
-	ZSTD_outBuffer outbuf;
+	zstd_cstream *stream = cc->private2;
+	zstd_in_buffer inbuf;
+	zstd_out_buffer outbuf;
 	int src_size = cc->rlen;
 	int dst_size = src_size - PAGE_SIZE - COMPRESS_HEADER_SIZE;
 	int ret;
@@ -420,7 +420,7 @@ static int zstd_compress_pages(struct compress_ctx *cc)
 
 static int zstd_init_decompress_ctx(struct decompress_io_ctx *dic)
 {
-	ZSTD_DStream *stream;
+	zstd_dstream *stream;
 	void *workspace;
 	unsigned int workspace_size;
 	unsigned int max_window_size =
@@ -457,9 +457,9 @@ static void zstd_destroy_decompress_ctx(struct decompress_io_ctx *dic)
 
 static int zstd_decompress_pages(struct decompress_io_ctx *dic)
 {
-	ZSTD_DStream *stream = dic->private2;
-	ZSTD_inBuffer inbuf;
-	ZSTD_outBuffer outbuf;
+	zstd_dstream *stream = dic->private2;
+	zstd_in_buffer inbuf;
+	zstd_out_buffer outbuf;
 	int ret;
 
 	inbuf.pos = 0;

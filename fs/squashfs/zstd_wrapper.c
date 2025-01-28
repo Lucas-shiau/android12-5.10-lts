@@ -63,11 +63,11 @@ static int zstd_uncompress(struct squashfs_sb_info *msblk, void *strm,
 	struct squashfs_page_actor *output)
 {
 	struct workspace *wksp = strm;
-	ZSTD_DStream *stream;
+	zstd_dstream *stream;
 	size_t total_out = 0;
 	int error = 0;
-	ZSTD_inBuffer in_buf = { NULL, 0, 0 };
-	ZSTD_outBuffer out_buf = { NULL, 0, 0 };
+	zstd_in_buffer in_buf = { NULL, 0, 0 };
+	zstd_out_buffer out_buf = { NULL, 0, 0 };
 	struct bvec_iter_all iter_all = {};
 	struct bio_vec *bvec = bvec_init_iter_all(&iter_all);
 

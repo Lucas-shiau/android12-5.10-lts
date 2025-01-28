@@ -28,10 +28,10 @@
 /* 307s to avoid pathologically clashing with transaction commit */
 #define ZSTD_BTRFS_RECLAIM_JIFFIES (307 * HZ)
 
-static ZSTD_parameters zstd_get_btrfs_parameters(unsigned int level,
+static zstd_parameters zstd_get_btrfs_parameters(unsigned int level,
 						 size_t src_len)
 {
-	ZSTD_parameters params = ZSTD_getParams(level, src_len, 0);
+	zstd_parameters params = ZSTD_getParams(level, src_len, 0);
 
 	if (params.cParams.windowLog > ZSTD_BTRFS_MAX_WINDOWLOG)
 		params.cParams.windowLog = ZSTD_BTRFS_MAX_WINDOWLOG;
@@ -48,8 +48,8 @@ struct workspace {
 	unsigned long last_used; /* jiffies */
 	struct list_head list;
 	struct list_head lru_list;
-	ZSTD_inBuffer in_buf;
-	ZSTD_outBuffer out_buf;
+	zstd_in_buffer in_buf;
+	zstd_out_buffer out_buf;
 };
 
 /*
@@ -155,7 +155,7 @@ static void zstd_calc_ws_mem_sizes(void)
 	unsigned int level;
 
 	for (level = 1; level <= ZSTD_BTRFS_MAX_LEVEL; level++) {
-		ZSTD_parameters params =
+		zstd_parameters params =
 			zstd_get_btrfs_parameters(level, ZSTD_BTRFS_MAX_INPUT);
 		size_t level_size =
 			max_t(size_t,
@@ -371,7 +371,7 @@ int zstd_compress_pages(struct list_head *ws, struct address_space *mapping,
 		unsigned long *total_in, unsigned long *total_out)
 {
 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-	ZSTD_CStream *stream;
+	zstd_cstream *stream;
 	int ret = 0;
 	int nr_pages = 0;
 	struct page *in_page = NULL;  /* The current page to read */
@@ -381,7 +381,7 @@ int zstd_compress_pages(struct list_head *ws, struct address_space *mapping,
 	unsigned long len = *total_out;
 	const unsigned long nr_dest_pages = *out_pages;
 	unsigned long max_out = nr_dest_pages * PAGE_SIZE;
-	ZSTD_parameters params = zstd_get_btrfs_parameters(workspace->req_level,
+	zstd_parameters params = zstd_get_btrfs_parameters(workspace->req_level,
 							   len);
 
 	*out_pages = 0;
@@ -550,7 +550,7 @@ int zstd_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
 	u64 disk_start = cb->start;
 	struct bio *orig_bio = cb->orig_bio;
 	size_t srclen = cb->compressed_len;
-	ZSTD_DStream *stream;
+	zstd_dstream *stream;
 	int ret = 0;
 	unsigned long page_in_index = 0;
 	unsigned long total_pages_in = DIV_ROUND_UP(srclen, PAGE_SIZE);
@@ -626,7 +626,7 @@ int zstd_decompress(struct list_head *ws, unsigned char *data_in,
 		size_t destlen)
 {
 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-	ZSTD_DStream *stream;
+	zstd_dstream *stream;
 	int ret = 0;
 	size_t ret2;
 	unsigned long total_out = 0;

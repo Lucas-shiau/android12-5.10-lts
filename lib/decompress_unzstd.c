@@ -167,14 +167,14 @@ static int INIT __unzstd(unsigned char *in_buf, long in_len,
 			 long *in_pos,
 			 void (*error)(char *x))
 {
-	ZSTD_inBuffer in;
-	ZSTD_outBuffer out;
-	ZSTD_frameParams params;
+	zstd_in_buffer in;
+	zstd_out_buffer out;
+	zstd_frame_header header;
 	void *in_allocated = NULL;
 	void *out_allocated = NULL;
 	void *wksp = NULL;
 	size_t wksp_size;
-	ZSTD_DStream *dstream;
+	zstd_dstream *dstream;
 	int err;
 	size_t ret;
 
@@ -238,7 +238,7 @@ static int INIT __unzstd(unsigned char *in_buf, long in_len,
 	out.size = out_len;
 
 	/*
-	 * We need to know the window size to allocate the ZSTD_DStream.
+	 * We need to know the window size to allocate the zstd_dstream.
 	 * Since we are streaming, we need to allocate a buffer for the sliding
 	 * window. The window size varies from 1 KB to ZSTD_WINDOWSIZE_MAX
 	 * (8 MB), so it is important to use the actual value so as not to
@@ -260,14 +260,14 @@ static int INIT __unzstd(unsigned char *in_buf, long in_len,
 	}
 
 	/*
-	 * Allocate the ZSTD_DStream now that we know how much memory is
+	 * Allocate the zstd_dstream now that we know how much memory is
 	 * required.
 	 */
 	wksp_size = ZSTD_DStreamWorkspaceBound(params.windowSize);
 	wksp = large_malloc(wksp_size);
 	dstream = ZSTD_initDStream(params.windowSize, wksp, wksp_size);
 	if (dstream == NULL) {
-		error("Out of memory while allocating ZSTD_DStream");
+		error("Out of memory while allocating zstd_dstream");
 		err = -1;
 		goto out;
 	}
